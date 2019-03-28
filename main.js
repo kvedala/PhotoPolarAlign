@@ -27,5 +27,24 @@ app.on('window-all-closed', () => {
     app.quit()
     // }
 })
+
+
+const template = [
+    {
+        label: (process.platform === 'darwin') ? app.getName() : "Main Menu",
+        submenu: [
+            { role: 'about' },
+            { type: 'separator' },
+            { role: 'services' },
+            { type: 'separator' },
+            { role: 'hide' },
+            { role: 'hideothers' },
+            { role: 'unhide' },
+            { type: 'separator' },
+            { role: 'quit' }
+        ]
     }
-})
+]
+
+const menu = Menu.buildFromTemplate(template)
+Menu.setApplicationMenu(menu)
