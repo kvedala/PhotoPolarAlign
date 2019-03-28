@@ -1,5 +1,6 @@
 {
   "name": "photopolaralign",
+  "productName": "Photo Polar Align",
   "version": "0.0.1",
   "description": "Utility to help align German Equatorial telescope mount by imaging the Celestial Pole region.",
   "main": "main.js",
