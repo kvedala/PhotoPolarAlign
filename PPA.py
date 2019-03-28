@@ -60,10 +60,10 @@ class NovaClient(object):
         from email.mime.base import MIMEBase
         from email.mime.multipart import MIMEMultipart
         from email.encoders import encode_noop
-        from urllib2 import urlopen
-        from urllib2 import Request
-        from urllib2 import HTTPError
-        from urllib import urlencode
+        from urllib.request import urlopen
+        from urllib.request import Request
+        from urllib.error import HTTPError
+        from urllib.parse import urlencode
         from email.mime.application import MIMEApplication
         if self.session is not None:
             args.update({'session': self.session})
@@ -71,7 +71,7 @@ class NovaClient(object):
         json = python2json(args)
         # print 'Sending json:', json
         url = self.get_url(service)
-        print 'Sending to URL:', url
+        print('Sending to URL:', url)
         # If we're sending a file, format a multipart/form-data
         if file_args is not None:
             ma1 = MIMEBase('text', 'plain')
@@ -88,7 +88,7 @@ class NovaClient(object):
             # filename=('iso-8859-1', '', 'FuSballer.ppt'))
             mpa = MIMEMultipart('form-data', None, [ma1, ma2])
             # Makie a custom generator to format it the way we need.
-            from cStringIO import StringIO
+            from io import StringIO
             from email.generator import Generator
 
             class MyGenerator(Generator):
@@ -108,10 +108,10 @@ class NovaClient(object):
                     # We need to use \r\n line-terminator, but Generator
                     # doesn't provide the flexibility to override, so we
                     # have to copy-n-paste-n-modify.
-                    for hoo, voo in msg.items():
-                        print >> self._fp, ('%s: %s\r\n' % (hoo, voo)),
+                    for hoo, voo in list(msg.items()):
+                        print(('%s: %s\r\n' % (hoo, voo)), end=' ', file=self._fp)
                         # A blank line always separates headers from body
-                    print >> self._fp, '\r\n',
+                    print('\r\n', end=' ', file=self._fp)
                     # The _write_multipart method calls "clone" for the
                     # subparts.  We hijack that, setting root=False
 
@@ -142,11 +142,11 @@ class NovaClient(object):
                 errstr = result.get('errormessage', '(none)')
                 raise RequestError('server error message: ' + errstr)
             return result
-        except HTTPError, err:
-            print 'HTTPError', err
+        except HTTPError as err:
+            print('HTTPError', err)
             txt = err.read()
             open('err.html', 'wb').write(txt)
-            print 'Wrote error text to err.html'
+            print('Wrote error text to err.html')
 
     def login(self, apikey):
         '''
@@ -156,7 +156,7 @@ class NovaClient(object):
         args = {'apikey': string.strip(apikey)}
         result = self.send_request('login', args)
         sess = result.get('session')
-        print 'Got session:', sess
+        print('Got session:', sess)
         if not sess:
             raise RequestError('no session in result')
         self.session = sess
@@ -202,7 +202,7 @@ class NovaClient(object):
             result = self.send_request('upload', args, (fne, fle.read()))
             return result
         except IOError:
-            print 'File %s does not exist' % fne
+            print('File %s does not exist' % fne)
             raise
 
     def myjobs(self):
@@ -237,7 +237,7 @@ class NovaClient(object):
         '''
         not sure what that does
         '''
-        from urllib import quote
+        from urllib.parse import quote
         exact_option = 'exact=yes' if exact else ''
         result = self.send_request('jobs_by_tag?query=%s&%s'
                                    % (quote(tag.strip()), exact_option), {}, )
@@ -263,7 +263,7 @@ def limg2wcs(self, filename, wcsfn, hint):
         # Cygwin local or Linux local
         if True:
             # first rough estimate of scale
-            print '___________________________________________________________'
+            print('___________________________________________________________')
             cmd = 'solve-field -b ' + self.local_configfile.get()
             if self.havescale and self.restrict_scale.get()==1:
                 up_lim = self.scale*1.05
@@ -281,14 +281,14 @@ def limg2wcs(self, filename, wcsfn, hint):
             template = ((self.local_shell.get() % cmd))
             # print template
             cmd = (template % filename)
-            print cmd
+            print(cmd)
             os.system(cmd)
             self.update_scale(hint)
-            print '___________________________________________________________'
+            print('___________________________________________________________')
     self.update_solved_labels(hint, 'active')
     stat_bar(self, 'Idle')
-    print 'local solve time ' + str(time.time()-t_start)
-    print '___________________________________________________________'            
+    print('local solve time ' + str(time.time()-t_start))
+    print('___________________________________________________________')            
 
     
 def img2wcs(self, ankey, filename, wcsfn, hint):
@@ -297,7 +297,7 @@ def img2wcs(self, ankey, filename, wcsfn, hint):
     '''
     import optparse
     import time
-    from urllib2 import urlopen
+    from urllib.request import urlopen
     t_start = time.time()
     parser = optparse.OptionParser()
     parser.add_option('--server', dest='server',
@@ -389,13 +389,13 @@ def img2wcs(self, ankey, filename, wcsfn, hint):
         opt.scale_est = ('%.2f' % self.scale)
         opt.scale_err = 5
     # DEBUG print opt
-    print 'with estimated scale', opt.scale_est
+    print('with estimated scale', opt.scale_est)
     args = {}
     args['apiurl'] = opt.server
     clnt = NovaClient(**args)
     try:
         clnt.login(opt.apikey)
-    except RequestError, URLError:
+    except RequestError as URLError:
         stat_bar(self, ("Couldn't log on to nova.astrometry.net " +
                         '- Check the API key'))
         return
@@ -428,14 +428,14 @@ def img2wcs(self, ankey, filename, wcsfn, hint):
             upres = clnt.upload(opt.upload, **kwargs)
         stat = upres['status']
         if stat != 'success':
-            print 'Upload failed: status', stat
-            print upres
+            print('Upload failed: status', stat)
+            print(upres)
             sys.exit(-1)
         opt.sub_id = upres['subid']
     if opt.wait:
         if opt.job_id is None:
             if opt.sub_id is None:
-                print "Can't --wait without a submission id or job id!"
+                print("Can't --wait without a submission id or job id!")
                 sys.exit(-1)
             while True:
                 stat = clnt.sub_status(opt.sub_id, justdict=True)
@@ -446,7 +446,7 @@ def img2wcs(self, ankey, filename, wcsfn, hint):
                         if j is not None:
                             break
                     if j is not None:
-                        print 'Selecting job id', j
+                        print('Selecting job id', j)
                         opt.job_id = j
                         break
                 time.sleep(5)
@@ -467,53 +467,53 @@ def img2wcs(self, ankey, filename, wcsfn, hint):
                 url = opt.server.replace('/api/', '/wcs_file/%i' % opt.job_id)
                 retrieveurls.append((url, opt.wcs))
             for url, fne in retrieveurls:
-                print 'Retrieving file from', url
+                print('Retrieving file from', url)
                 fle = urlopen(url)
                 txt = fle.read()
                 wfl = open(fne, 'wb')
                 wfl.write(txt)
                 wfl.close()
-                print 'Wrote to', fne
+                print('Wrote to', fne)
                 self.update_solved_labels(hint, 'active')
                 stat_bar(self,'Idle')
-                print 'nova solve time ' + str(time.time()-t_start)
-                print '___________________________________________________________'            
+                print('nova solve time ' + str(time.time()-t_start))
+                print('___________________________________________________________')            
         opt.job_id = None
         opt.sub_id = None
     if opt.sub_id:
-        print clnt.sub_status(opt.sub_id)
+        print(clnt.sub_status(opt.sub_id))
     if opt.job_id:
-        print clnt.job_status(opt.job_id)
+        print(clnt.job_status(opt.job_id))
     if opt.jobs_by_tag:
         tag = opt.jobs_by_tag
-        print clnt.jobs_by_tag(tag, None)
+        print(clnt.jobs_by_tag(tag, None))
     if opt.jobs_by_exact_tag:
         tag = opt.jobs_by_exact_tag
-        print clnt.jobs_by_tag(tag, 'yes')
+        print(clnt.jobs_by_tag(tag, 'yes'))
     if opt.myjobs:
         jobs = clnt.myjobs()
-        print jobs
+        print(jobs)
 
-from Tkinter import Frame, Tk, Menu, Label, Entry, PhotoImage
-from Tkinter import Scrollbar, Toplevel, Canvas, Radiobutton
-from Tkinter import StringVar, IntVar, DoubleVar
-from Tkinter import Button, LabelFrame, Checkbutton, Scale
-from Tkinter import HORIZONTAL
+from tkinter import Frame, Tk, Menu, Label, Entry, PhotoImage
+from tkinter import Scrollbar, Toplevel, Canvas, Radiobutton
+from tkinter import StringVar, IntVar, DoubleVar
+from tkinter import Button, LabelFrame, Checkbutton, Scale
+from tkinter import HORIZONTAL
 
 def help_f():
     '''
     Our help window
     '''
-    import tkMessageBox
-    tkMessageBox.showinfo("Help", "Still to come...")
+    import tkinter.messagebox
+    tkinter.messagebox.showinfo("Help", "Still to come...")
 
 
 def about_f():
     '''
     our about window
     '''
-    import tkMessageBox
-    tkMessageBox.showinfo('About',
+    import tkinter.messagebox
+    tkinter.messagebox.showinfo('About',
                           'PhotoPolarAlign v1.0.4 \n' +
                           'Copyright Â© 2014 Themos Tsikas, ' +
                           'Jack Richmond')
@@ -813,7 +813,7 @@ class PhotoPolarAlign(Frame):
         '''
         User wants to select an image file
         '''
-        import tkFileDialog
+        import tkinter.filedialog
         from os.path import splitext, dirname, basename
         options = {}
         options['filetypes'] = [('JPEG files', '.jpg .jpeg .JPG .JPEG'),
@@ -824,7 +824,7 @@ class PhotoPolarAlign(Frame):
         titles['h'] = 'The horizontal image of the Celestial Pole region'
         titles['i'] = 'The horizontal image after Alt/Az adjustment'
         options['title'] = titles[hint]
-        img = tkFileDialog.askopenfilename(**options)
+        img = tkinter.filedialog.askopenfilename(**options)
         if img:
             wcs = splitext(img)[0] + '.wcs'
             if self.happy_with(wcs, img):
@@ -1068,9 +1068,9 @@ class PhotoPolarAlign(Frame):
         # pixel coordinates
         cpcrdh = wcsh.wcs_world2pix(cpskycrd, 1)
         if self.hemi == 'N':
-            print 'Northern Celestial Pole', dech
+            print('Northern Celestial Pole', dech)
         else:
-            print 'Southern Celestial Pole', dech
+            print('Southern Celestial Pole', dech)
         scaleh = scale_frm_header(headh)
         widthh, heighth = wid_hei_frm_header(headh)
         if wid_hei_frm_header(headh) != wid_hei_frm_header(headv):
@@ -1180,16 +1180,16 @@ class PhotoPolarAlign(Frame):
         widget.update()
 
     def slurpAT(self):
-        import tkFileDialog
-        import ConfigParser
+        import tkinter.filedialog
+        import configparser
         stat_bar(self,'Reading...')
         options = {}
         options['filetypes'] = [('Config files', '.cfg'),
                                 ('all files', '.*')]
         options['initialdir'] = self.imgdir
         options['title'] = 'The AstroTortilla configuration file'
-        cfg_fn = tkFileDialog.askopenfilename(**options)
-        config = ConfigParser.SafeConfigParser()
+        cfg_fn = tkinter.filedialog.askopenfilename(**options)
+        config = configparser.SafeConfigParser()
         config.read(cfg_fn)
         for s in config.sections():
             if s == 'Solver-AstrometryNetSolver':
@@ -1353,7 +1353,7 @@ class PhotoPolarAlign(Frame):
         self.wstat = nxt
 
     def __init__(self, master=None):
-        import ConfigParser
+        import configparser
         import numpy
         import os 
         # a F8Ib 2.0 mag star, Alpha Ursa Minoris
@@ -1389,7 +1389,7 @@ class PhotoPolarAlign(Frame):
         
 
         # Read the User preferences
-        self.config = ConfigParser.ConfigParser()
+        self.config = configparser.ConfigParser()
         self.config.read(self.cfgfn)
         # ...the key
         try:
@@ -1497,7 +1497,7 @@ class PhotoPolarAlign(Frame):
             # check solve-field cmd
             exit_status = os.system(self.local_shell.get() % 'solve-field > /dev/null')
             if exit_status != 0:
-                print "Can't use local astrometry.net solver, check PATH"
+                print("Can't use local astrometry.net solver, check PATH")
             else:
                 self.wlvsol.configure(state='active')
                 self.wlhsol.configure(state='active')
