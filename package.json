@@ -24,6 +24,7 @@
   },
   "homepage": "https://github.com/kvedala/PhotoPolarAlign#readme",
   "devDependencies": {
-    "electron": "^4.1.1"
+    "electron": "^4.1.1",
+    "electron-settings": "^3.2.0"
   }
 }
