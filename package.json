@@ -1,0 +1,26 @@
+{
+  "name": "photopolaralign",
+  "version": "0.0.1",
+  "description": "Utility to help align German Equatorial telescope mount by imaging the Celestial Pole region.",
+  "main": "main.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/kvedala/PhotoPolarAlign.git"
+  },
+  "keywords": [
+    "polar",
+    "align",
+    "equatorial",
+    "mount",
+    "astrophotography"
+  ],
+  "author": "Krishna Vedala",
+  "license": "GPL-3.0-or-later",
+  "bugs": {
+    "url": "https://github.com/kvedala/PhotoPolarAlign/issues"
+  },
+  "homepage": "https://github.com/kvedala/PhotoPolarAlign#readme"
+}
