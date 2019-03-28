@@ -4,7 +4,7 @@
   "description": "Utility to help align German Equatorial telescope mount by imaging the Celestial Pole region.",
   "main": "main.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "start": "electron ."
   },
   "repository": {
     "type": "git",
@@ -22,5 +22,8 @@
   "bugs": {
     "url": "https://github.com/kvedala/PhotoPolarAlign/issues"
   },
-  "homepage": "https://github.com/kvedala/PhotoPolarAlign#readme"
+  "homepage": "https://github.com/kvedala/PhotoPolarAlign#readme",
+  "devDependencies": {
+    "electron": "^4.1.1"
+  }
 }
