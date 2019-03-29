@@ -5,7 +5,13 @@
   "description": "Utility to help align German Equatorial telescope mount by imaging the Celestial Pole region.",
   "main": "main.js",
   "scripts": {
-    "start": "electron ."
+    "clean": "rimraf dist",
+    "start": "electron .",
+    "exe32": "electron-packager . photopolaralign --platform win32 --arch ia32 --out dist/ --icon ./images/PPA.ico",
+    "exe64": "electron-packager . photopolaralign --platform win32 --arch x64 --out dist/ --icon ./images/PPA.ico",
+    "set32": "electron-installer-windows --src dist/photopolaralign-win32-ia32/ --dest dist/installers/ia32/",
+    "set64": "electron-installer-windows --src dist/photopolaralign-win32-x64/ --dest dist/installers/x64/",
+    "build": "npm run clean && npm run exe32 && npm run set32 && npm run exe64 && npm run set64"
   },
   "repository": {
     "type": "git",
@@ -29,6 +35,7 @@
   "homepage": "https://github.com/kvedala/PhotoPolarAlign#readme",
   "devDependencies": {
     "electron": "^4.1.1",
+    "electron-installer-windows": "^1.1.1",
     "electron-settings": "^3.2.0"
   },
   "dependencies": {
