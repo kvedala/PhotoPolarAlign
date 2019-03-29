@@ -1,3 +1,4 @@
+let $ = require('jquery')
 const { clipboard, remote } = require('electron')
 const keyCodes = {
     V: 86,
@@ -17,7 +18,9 @@ document.onkeydown = function (event) {
     return toReturn
 }
 
-let $ = require('jquery');
+$('#btnCancel').on('click', function (event) {
+    remote.getCurrentWindow().close()
+})
 
 $('#btnAPI').on('click', function (event) {
     const jsonKey = { 'apikey': document.getElementById("txtApiKey").value }
