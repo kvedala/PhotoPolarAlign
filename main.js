@@ -1,6 +1,7 @@
+'use strict';
+
 const { app, BrowserWindow, ipcMain } = require('electron')
 const { Menu, MenuItem } = require('electron')
-const settings = require('electron-settings')
 
 let mainWin
 
@@ -16,6 +17,19 @@ function createWindow() {
     mainWin.loadFile('index.html')
     mainWin.webContents.openDevTools()
 
+    const template = [
+        {
+            label: (process.platform === 'darwin') ? app.getName() : "Main Menu",
+            submenu: [
+                { role: 'about' },
+                { role: 'quit' }
+            ]
+        }
+    ]
+
+    const menu = Menu.buildFromTemplate(template)
+    Menu.setApplicationMenu(menu)
+
     mainWin.on('closed', () => {
         mainWin = null
     })
@@ -28,23 +42,12 @@ app.on('window-all-closed', () => {
     // }
 })
 
-
-const template = [
-    {
-        label: (process.platform === 'darwin') ? app.getName() : "Main Menu",
-        submenu: [
-            { role: 'about' },
-            { type: 'separator' },
-            { role: 'services' },
-            { type: 'separator' },
-            { role: 'hide' },
-            { role: 'hideothers' },
-            { role: 'unhide' },
-            { type: 'separator' },
-            { role: 'quit' }
-        ]
-    }
-]
-
-const menu = Menu.buildFromTemplate(template)
-Menu.setApplicationMenu(menu)
+ipcMain.on('open-settings', function (event) {
+    let childwin = new BrowserWindow({
+        width: 400, height: 300, parent: mainWin,
+        modal: true, show: false
+    })
+    childwin.loadFile('./settings.html')
+    childwin.once('ready-to-show', () => { childwin.show() })
+    event.sender.send('settings-saved')
+})
