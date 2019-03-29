@@ -1,3 +1,22 @@
+const { clipboard } = require('electron')
+const keyCodes = {
+    V: 86,
+}
+
+
+document.onkeydown = function (event) {
+    let toReturn = true
+    if (event.ctrlKey || event.metaKey) {  // detect ctrl or cmd
+        if (event.which == keyCodes.V) {
+            document.activeElement.value += clipboard.readText()
+            document.activeElement.dispatchEvent(new Event('input'))
+            toReturn = false
+        }
+    }
+
+    return toReturn
+}
+
 let $ = require('jquery');
 
 $('#btnAPI').on('click', function (event) {
