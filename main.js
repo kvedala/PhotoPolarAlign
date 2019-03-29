@@ -52,5 +52,6 @@ ipcMain.on('open-settings', function (event) {
     })
     childwin.loadFile('./settings.html')
     childwin.once('ready-to-show', () => { childwin.show() })
+    childwin.setMenu(null)
     event.sender.send('settings-saved')
 })
