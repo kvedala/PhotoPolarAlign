@@ -28,5 +28,5 @@ btnSettings.addEventListener('click', function (event) {
 })
 
 ipc.on('settings-saved', function (event) {
-
+    
 })

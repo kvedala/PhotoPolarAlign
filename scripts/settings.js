@@ -1,4 +1,4 @@
-const { clipboard } = require('electron')
+const { clipboard, remote } = require('electron')
 const keyCodes = {
     V: 86,
 }
@@ -40,6 +40,7 @@ $('#btnAPI').on('click', function (event) {
                 if (apiResponse.status == 'success') {
                     const esettings = require('electron-settings')
                     esettings.set('novaAPIKey', document.getElementById("txtApiKey").value)
+                    remote.getCurrentWindow().close()
                 } else if (apiResponse.status == 'error')
                     alert('Error with the API key: ' + apiResponse.errormessage)
                 else
