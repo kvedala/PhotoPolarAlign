@@ -34,7 +34,18 @@ $('#btnAPI').on('click', function (event) {
         //     console.log(data)
         // },
         complete: function (xhr, status) {
-            console.log(status + ': ' + xhr)
+            if (status == 'success') {
+                console.log(status + ': ' + xhr.responseText)
+                const apiResponse = JSON.parse(xhr.responseText)
+                if (apiResponse.status == 'success') {
+                    const esettings = require('electron-settings')
+                    esettings.set('novaAPIKey', document.getElementById("txtApiKey").value)
+                } else if (apiResponse.status == 'error')
+                    alert('Error with the API key: ' + apiResponse.errormessage)
+                else
+                    alert('Unknown API response: ' + xhr.responseText)
+            } else
+                alert('Error occurred when accessing http://nova.astrometry.net/api/login API.')
         }
     })
 })
