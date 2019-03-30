@@ -3,7 +3,8 @@
 const { app, BrowserWindow, ipcMain } = require('electron')
 const { Menu, MenuItem } = require('electron')
 
-let mainWin
+let mainWin = null
+const debug = /--debug/.test(process.argv[2])
 
 function createWindow() {
     app.requestSingleInstanceLock()
@@ -11,11 +12,16 @@ function createWindow() {
         width: 800, height: 600, resizable: false,
         maximizable: false, fullscreenable: false,
         icon: 'images/PPA.ico',
-        darkTheme: true
+        darkTheme: true, webPreferences: { nodeIntegration: true }
     })
 
     mainWin.loadFile('index.html')
-    mainWin.webContents.openDevTools()
+    // Launch fullscreen with DevTools open, usage: npm run debug
+    if (debug) {
+        mainWin.webContents.openDevTools()
+        mainWin.maximize()
+        require('devtron').install()
+    }
 
     const template = [
         {
@@ -36,6 +42,10 @@ function createWindow() {
 }
 
 app.on('ready', createWindow)
+app.on('activate', () => {
+    if (mainWin === null)
+        createWindow()
+})
 app.on('window-all-closed', () => {
     // if (process.platform !== 'darwin') {
     app.quit()
