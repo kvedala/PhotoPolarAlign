@@ -22,11 +22,11 @@ $(window).on('unload', function () {
         esettings.delete('novaSession')
 })
 
-var btnSettings = document.getElementById("btn_settings")
+const btnSettings = document.getElementById("btn_settings")
 btnSettings.addEventListener('click', function (event) {
     ipc.send('open-settings')
 })
 
 ipc.on('settings-saved', function (event) {
-    
+
 })
