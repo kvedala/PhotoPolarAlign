@@ -24,10 +24,7 @@
     "mount",
     "astrophotography"
   ],
-  "author": {
-    "name": "Krishna Vedala",
-    "email": "krishna.vedala@ieee.org"
-  },
+  "author": "Krishna Vedala <krishna.vedala@ieee.org>",
   "license": "GPL-3.0-or-later",
   "bugs": {
     "url": "https://github.com/kvedala/PhotoPolarAlign/issues"
